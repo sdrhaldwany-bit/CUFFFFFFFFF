@@ -430,3 +430,53 @@ RunService.RenderStepped:Connect(function()
 end)
 
 print("Omega Drop Mode Active - Buttons are working")
+-- ========== ANTI-CUFF SYSTEM ==========
+local AntiCuffActive = false
+
+-- دالة فك الكلبة عن النفس (حماية)
+local function AntiCuffSelf()
+    UpdateRemoteEvents()
+    for _, re in pairs(RemoteEvents) do
+        pcall(function()
+            re:FireServer("UnCuff")
+        end)
+    end
+end
+
+-- تشغيل الحماية بشكل مستمر
+RunService.Heartbeat:Connect(function()
+    if AntiCuffActive then
+        AntiCuffSelf()
+    end
+end)
+
+-- إضافة زر Anti-Cuff إلى الواجهة (توسيع الإطار)
+dropFrame.Size = UDim2.new(0, 160, 0, 305) -- زيادة ارتفاع الإطار
+
+-- نقل الأزرار الموجودة إلى الأسفل قليلاً
+cuffBtn.Position = UDim2.new(0.5, -70, 0, 55)
+cuffAllBtn.Position = UDim2.new(0.5, -70, 0, 100)
+uncuffAllBtn.Position = UDim2.new(0.5, -70, 0, 145)
+dropBtn.Position = UDim2.new(0.5, -70, 0, 190)
+
+-- زر Anti-Cuff الجديد
+local antiCuffBtn = Instance.new("TextButton")
+antiCuffBtn.Size = UDim2.new(0, 140, 0, 35)
+antiCuffBtn.Position = UDim2.new(0.5, -70, 0, 235)
+antiCuffBtn.Text = "Anti-Cuff: OFF"
+antiCuffBtn.TextScaled = true
+antiCuffBtn.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+antiCuffBtn.Parent = dropFrame
+local antiCuffCorner = Instance.new("UICorner")
+antiCuffCorner.CornerRadius = UDim.new(0, 6)
+antiCuffCorner.Parent = antiCuffBtn
+
+-- تحديث مكان العداد
+countLabel.Position = UDim2.new(0.5, -70, 0, 275)
+
+-- حدث زر Anti-Cuff
+antiCuffBtn.MouseButton1Click:Connect(function()
+    AntiCuffActive = not AntiCuffActive
+    antiCuffBtn.Text = AntiCuffActive and "Anti-Cuff: ON" or "Anti-Cuff: OFF"
+    antiCuffBtn.BackgroundColor3 = AntiCuffActive and Color3.fromRGB(0, 150, 0) or Color3.fromRGB(100, 100, 100)
+end)
